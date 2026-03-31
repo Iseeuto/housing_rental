@@ -6,11 +6,10 @@ export function BuildError(code, message) {
   return err;
 }
 
-export async function validateFields(rules, req, res, next) {
+export async function validateFields(rules, req, res) {
   await Promise.all(rules.map((r) => r.run(req)));
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  next();
 }

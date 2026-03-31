@@ -39,7 +39,8 @@ const rules = [
 ];
 
 export async function validateBookingFields(req, res, next) {
-  validateFields(rules, req, res, next);
+  validateFields(rules, req, res);
+  next();
 }
 
 export function validateBookingId(req, res, next) {

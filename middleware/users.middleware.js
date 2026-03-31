@@ -39,7 +39,8 @@ const rules = [
 ];
 
 export function validateUserFields(req, res, next) {
-  validateFields(rules, req, res, next);
+  validateFields(rules, req, res);
+  next();
 }
 
 export function validateUserId(req, res, next) {

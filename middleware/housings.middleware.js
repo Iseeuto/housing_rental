@@ -42,7 +42,14 @@ const rules = [
 ];
 
 export async function validateHousingFields(req, res, next) {
-  validateFields(rules, req, res, next);
+  validateFields(rules, req, res);
+
+  if (req.body.pricePerDay <= 0)
+    throw BuildError(400, "'pricePerDay' should be non-null positive.");
+  if (req.body.capacity <= 0)
+    throw BuildError(400, "'capacity' should be non-null positive.");
+
+  next();
 }
 
 export function validateHousingId(req, res, next) {
