@@ -4,7 +4,6 @@ const prisma = new PrismaClient();
 
 export async function getHousings(req, res) {
   const housings = await prisma.housing.findMany({
-    where: req.filter,
     include: {
       landlord: true,
       bookings: true,
@@ -16,20 +15,6 @@ export async function getHousings(req, res) {
 
 export async function getHousingByID(req, res) {
   res.json(req.housing);
-}
-
-export async function getHousingReservations(req, res) {
-  const { id } = req.params;
-
-  const reservations = await prisma.booking.findMany({
-    where: { housingId: id },
-    include: {
-      tenant: true,
-      housing: true,
-    },
-  });
-
-  res.json(reservations);
 }
 
 export async function addHousing(req, res) {
@@ -74,4 +59,28 @@ export async function deleteHousing(req, res) {
   });
 
   res.sendStatus(200);
+}
+
+export async function getHousingBookings(req, res) {
+  const { id } = req.params;
+
+  const bookings = await prisma.booking.findMany({
+    where: {
+      housingId: id,
+    },
+    select: {
+      arrivalDate: true,
+      departureDate: true,
+      tenant: {
+        select: {
+          name: true,
+          lastName: true,
+          email: true,
+          phone: true,
+        },
+      },
+    },
+  });
+
+  res.status(200).json(bookings);
 }

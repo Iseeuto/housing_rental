@@ -1,26 +1,48 @@
+import { check } from "express-validator";
 import { PrismaClient } from "../generated/prisma/index.js";
-import { BuildError } from "./common.js";
+import { BuildError, validateFields } from "./common.js";
 
 const prisma = new PrismaClient();
 
-export function validateHousingFields(req, res, next) {
-  const { landlordId, name, city, pricePerDay, capacity } = req.body;
-  const errors = [];
+const rules = [
+  check("landlordId")
+    .notEmpty()
+    .withMessage("'landlordId' field is missing.")
+    .bail()
+    .isString()
+    .withMessage("'landlordId' should be a string."),
 
-  if (!landlordId) errors.push("landlordId");
-  if (!name) errors.push("name");
-  if (!city) errors.push("city");
-  if (pricePerDay === undefined) errors.push("pricePerDay");
-  if (capacity === undefined) errors.push("capacity");
+  check("name")
+    .notEmpty()
+    .withMessage("'name' field is missing.")
+    .bail()
+    .isString()
+    .withMessage("'name' should be a string."),
 
-  if (errors.length > 0)
-    throw BuildError(400, `Missing required fields: ${errors.join(", ")}`);
+  check("city")
+    .notEmpty()
+    .withMessage("'city' field is missing.")
+    .bail()
+    .isString()
+    .withMessage("'city' should be a string."),
 
-  if (pricePerDay <= 0) throw BuildError(400, "Price must be greater than 0.");
+  check("pricePerDay")
+    .notEmpty()
+    .withMessage("'pricePerDay' field is missing.")
+    .bail()
+    .isFloat()
+    .withMessage("'pricePerDay' should be a float."),
 
-  if (capacity < 1) throw BuildError(400, "Capacity cannot be less than 1.");
+  check("capacity")
+    .notEmpty()
+    .withMessage("'capacity' field is missing.")
+    .bail()
+    .isInt()
+    .withMessage("'capacity' should be an int."),
+];
 
-  next();
+export async function validateHousingFields(req, res, next) {
+  validateFields(rules, req, res, next);
 }
 
 export function validateHousingId(req, res, next) {
@@ -41,16 +63,6 @@ export async function checkHousingExists(req, res, next) {
   if (!housing) throw BuildError(404, "Housing not found.");
 
   req.housing = housing;
-
-  next();
-}
-
-export function handleCityFilter(req, res, next) {
-  if (req.query.city) {
-    req.filter = { city: req.query.city };
-  } else {
-    req.filter = {};
-  }
 
   next();
 }

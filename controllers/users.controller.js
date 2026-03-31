@@ -60,7 +60,7 @@ export async function deleteUser(req, res) {
 }
 
 export async function getUserBookings(req, res) {
-  const id = req.params.id;
+  const { id } = req.params.id;
 
   const bookings = await prisma.booking.findMany({
     where: {
@@ -87,4 +87,22 @@ export async function getUserBookings(req, res) {
   });
 
   res.status(200).json(bookings);
+}
+
+export async function getUserHousings(req, res) {
+  const { id } = req.params.id;
+
+  const housings = await prisma.housing.findMany({
+    where: {
+      landlordId: id,
+    },
+    select: {
+      name: true,
+      city: true,
+      pricePerDay: true,
+      capacity: true,
+    },
+  });
+
+  res.status(200).json(housings);
 }

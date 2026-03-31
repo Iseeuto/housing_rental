@@ -6,28 +6,22 @@ import {
   addHousing,
   updateHousing,
   deleteHousing,
-  getHousingReservations,
+  getHousingBookings,
 } from "../controllers/housings.controller.js";
 
 import {
   validateHousingFields,
   validateHousingId,
   checkHousingExists,
-  handleCityFilter,
 } from "../middleware/housings.middleware.js";
 
 const router = express.Router();
 
-router.get("/", handleCityFilter, getHousings);
+router.get("/", getHousings);
 
 router.get("/:id", validateHousingId, checkHousingExists, getHousingByID);
 
-router.get(
-  "/:id/reservations",
-  validateHousingId,
-  checkHousingExists,
-  getHousingReservations,
-);
+router.get("/:id/bookings", validateHousingId, checkHousingExists, getHousingBookings)
 
 router.post("/", validateHousingFields, addHousing);
 

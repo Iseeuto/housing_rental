@@ -7,14 +7,13 @@ import {
   updateUser,
   deleteUser,
   getUserBookings,
+  getUserHousings,
 } from "../controllers/users.controller.js";
 
 import {
   validateUserFields,
   validateUserId,
   checkUserExists,
-  validateEmail,
-  validatePhone,
 } from "../middleware/users.middleware.js";
 
 const router = express.Router();
@@ -25,15 +24,15 @@ router.get("/:id", validateUserId, checkUserExists, getUserByID);
 
 router.get("/:id/bookings", validateUserId, checkUserExists, getUserBookings);
 
-router.post("/", validateUserFields, validateEmail, validatePhone, addUser);
+router.get("/:id/housings", validateUserId, checkUserExists, getUserHousings);
+
+router.post("/", validateUserFields, addUser);
 
 router.put(
   "/:id",
   validateUserId,
   checkUserExists,
   validateUserFields,
-  validateEmail,
-  validatePhone,
   updateUser,
 );
 
