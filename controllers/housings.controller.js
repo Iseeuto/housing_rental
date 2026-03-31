@@ -58,6 +58,11 @@ export async function deleteHousing(req, res) {
     where: { id },
   });
 
+  // Delete the bookings related to the housing
+  await prisma.booking.deleteMany({
+    where: { housingId: id },
+  });
+
   res.sendStatus(200);
 }
 

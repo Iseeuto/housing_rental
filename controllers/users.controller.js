@@ -56,6 +56,16 @@ export async function deleteUser(req, res) {
     where: { id },
   });
 
+  // Delete bookings related to the user
+  await prisma.booking.deleteMany({
+    where: { OR: [{ tenantId: id }, { housing: { landlordId: id } }] },
+  });
+
+  // Delete the user's housings
+  await prisma.housing.deleteMany({
+    where: { landlordId: id },
+  });
+
   res.sendStatus(200);
 }
 
